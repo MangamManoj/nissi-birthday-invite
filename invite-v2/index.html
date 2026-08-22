@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffe4ec" />
+    <meta
+      name="description"
+      content="You’re invited to celebrate Nissita Mangam’s first birthday — Saturday, 29th August, 10:00 AM at Cherukuri Convention."
+    />
+    <meta property="og:title" content="Nissita Mangam — First Birthday" />
+    <meta
+      property="og:description"
+      content="Saturday, 29th August · 10:00 AM · Cherukuri Convention, Bommuru"
+    />
+    <meta property="og:image" content="assets/baby.jpg" />
+    <title>Nissita Mangam — First Birthday (v2)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <canvas id="petals" aria-hidden="true"></canvas>
+
+    <div class="decor decor-balloons left" aria-hidden="true">
+      <svg viewBox="0 0 120 200" class="balloon-cluster">
+        <line x1="40" y1="70" x2="40" y2="190" stroke="#d4a017" stroke-width="1.2" />
+        <line x1="70" y1="55" x2="55" y2="190" stroke="#d4a017" stroke-width="1.2" />
+        <ellipse cx="40" cy="42" rx="22" ry="28" fill="#ff9eb5" />
+        <ellipse cx="40" cy="28" rx="8" ry="6" fill="#ffd0db" opacity="0.7" />
+        <path d="M40 70 l-4 8 h8 z" fill="#f07895" />
+        <ellipse cx="70" cy="32" rx="20" ry="26" fill="#ffe08a" />
+        <ellipse cx="70" cy="20" rx="7" ry="5" fill="#fff3c4" opacity="0.7" />
+        <path d="M70 58 l-4 8 h8 z" fill="#e8c040" />
+      </svg>
+    </div>
+    <div class="decor decor-balloons right" aria-hidden="true">
+      <svg viewBox="0 0 120 200" class="balloon-cluster">
+        <line x1="80" y1="70" x2="80" y2="190" stroke="#d4a017" stroke-width="1.2" />
+        <line x1="50" y1="55" x2="65" y2="190" stroke="#d4a017" stroke-width="1.2" />
+        <ellipse cx="80" cy="42" rx="22" ry="28" fill="#ffb07a" />
+        <ellipse cx="80" cy="28" rx="8" ry="6" fill="#ffd4b8" opacity="0.7" />
+        <path d="M80 70 l-4 8 h8 z" fill="#e89050" />
+        <ellipse cx="50" cy="32" rx="20" ry="26" fill="#8fd0ff" />
+        <ellipse cx="50" cy="20" rx="7" ry="5" fill="#ccebff" opacity="0.7" />
+        <path d="M50 58 l-4 8 h8 z" fill="#5cb0e8" />
+      </svg>
+    </div>
+
+    <main class="invite">
+      <!-- M2: tall hero + name band on photo -->
+      <header class="hero">
+        <p class="verse">
+          “I praise you, for I am fearfully and wonderfully made.”
+          <span class="verse-ref">Psalm 139:14</span>
+        </p>
+
+        <div class="hero-photo">
+          <img
+            src="assets/baby.jpg"
+            alt="Nissita Mangam"
+            width="800"
+            height="1200"
+          />
+          <div class="hero-band">
+            <p class="invite-line">You’re cordially invited</p>
+            <h1 class="name">Nissita Mangam</h1>
+            <p class="turns-one">turns ONE</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="details">
+        <p class="detail-date">Saturday, 29th August</p>
+        <p class="detail-time">10:00 AM onwards</p>
+        <p class="detail-lunch">Lunch follows</p>
+        <p class="detail-venue">Cherukuri Convention</p>
+        <p class="detail-address">NH216, Bommuru</p>
+      </section>
+
+      <nav class="actions" aria-label="Invitation actions">
+        <a
+          class="icon-btn"
+          id="maps-btn"
+          href="https://www.google.com/maps/search/?api=1&query=Cherukuri+Convention+NH216+Bommuru"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open in Maps"
+          title="Maps"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 21s-6-5.4-6-10a6 6 0 1 1 12 0c0 4.6-6 10-6 10z"
+            />
+            <circle
+              cx="12"
+              cy="11"
+              r="2.2"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            />
+          </svg>
+        </a>
+        <button
+          type="button"
+          class="icon-btn"
+          id="calendar-btn"
+          aria-label="Add to calendar"
+          title="Calendar"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect
+              x="3.5"
+              y="5"
+              width="17"
+              height="15"
+              rx="2"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            />
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              d="M8 3.5v3M16 3.5v3M3.5 10h17"
+            />
+          </svg>
+        </button>
+        <a
+          class="icon-btn"
+          id="share-btn"
+          href="#"
+          aria-label="Share on WhatsApp"
+          title="WhatsApp"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M12.04 2C6.58 2 2.15 6.4 2.15 11.84c0 1.98.58 3.82 1.58 5.38L2 22l4.94-1.63a9.9 9.9 0 0 0 5.1 1.4h.01c5.46 0 9.89-4.4 9.89-9.84C21.94 6.4 17.5 2 12.04 2zm5.76 13.99c-.24.68-1.4 1.24-1.94 1.32-.5.07-1.14.1-1.84-.12-.42-.13-.97-.28-1.67-.55-2.94-1.27-4.86-4.23-5.01-4.43-.15-.2-1.24-1.65-1.24-3.15s.78-2.23 1.06-2.54c.27-.3.6-.38.8-.38h.58c.18 0 .43-.07.67.51.24.6.82 2.07.89 2.22.07.15.12.33.02.53-.1.2-.15.33-.3.5-.15.18-.31.39-.44.53-.15.15-.3.31-.13.6.17.3.76 1.25 1.63 2.03 1.12 1 2.07 1.31 2.36 1.46.3.15.47.12.64-.07.18-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.72.81 2.01.96.3.15.5.22.57.35.08.12.08.7-.16 1.38z"
+            />
+          </svg>
+        </a>
+        <a
+          class="icon-btn"
+          href="assets/poster.png"
+          download="nissita-first-birthday.png"
+          aria-label="Save invite image"
+          title="Save image"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 4v10M8 10l4 4 4-4M5 18h14"
+            />
+          </svg>
+        </a>
+      </nav>
+
+      <p class="host">With love, The Mangam Family</p>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

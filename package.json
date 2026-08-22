@@ -1,0 +1,13 @@
+{
+  "name": "nissita-birthday-invitation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WhatsApp invitation posters for Nissita Mangam first birthday",
+  "scripts": {
+    "export": "node export-png.mjs",
+    "serve": "npx --yes serve . -p 5173"
+  },
+  "devDependencies": {
+    "puppeteer": "^24.22.0"
+  }
+}

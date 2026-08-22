@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffe4ec" />
+    <meta
+      name="description"
+      content="You’re invited to celebrate Nissita Mangam’s first birthday — Saturday, 29th August, 10:00 AM at Cherukuri Convention."
+    />
+    <meta property="og:title" content="Nissita Mangam — First Birthday" />
+    <meta
+      property="og:description"
+      content="Saturday, 29th August · 10:00 AM · Cherukuri Convention, Bommuru"
+    />
+    <meta property="og:image" content="assets/baby.jpg" />
+    <title>Nissita Mangam — First Birthday Invitation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <canvas id="petals" aria-hidden="true"></canvas>
+
+    <!-- Decor: balloons -->
+    <div class="decor decor-balloons left" aria-hidden="true">
+      <svg viewBox="0 0 120 200" class="balloon-cluster">
+        <line x1="40" y1="70" x2="40" y2="190" stroke="#c4a070" stroke-width="1.2" />
+        <line x1="70" y1="55" x2="55" y2="190" stroke="#c4a070" stroke-width="1.2" />
+        <line x1="95" y1="75" x2="70" y2="190" stroke="#c4a070" stroke-width="1.2" />
+        <ellipse cx="40" cy="42" rx="22" ry="28" fill="#ff9eb5" />
+        <ellipse cx="40" cy="28" rx="8" ry="6" fill="#ffd0db" opacity="0.7" />
+        <path d="M40 70 l-4 8 h8 z" fill="#f07895" />
+        <ellipse cx="70" cy="32" rx="20" ry="26" fill="#ffe08a" />
+        <ellipse cx="70" cy="20" rx="7" ry="5" fill="#fff3c4" opacity="0.7" />
+        <path d="M70 58 l-4 8 h8 z" fill="#e8c040" />
+        <ellipse cx="95" cy="48" rx="18" ry="24" fill="#8fd0ff" />
+        <ellipse cx="95" cy="36" rx="6" ry="5" fill="#ccebff" opacity="0.7" />
+        <path d="M95 72 l-4 8 h8 z" fill="#5cb0e8" />
+      </svg>
+    </div>
+    <div class="decor decor-balloons right" aria-hidden="true">
+      <svg viewBox="0 0 120 200" class="balloon-cluster">
+        <line x1="80" y1="70" x2="80" y2="190" stroke="#c4a070" stroke-width="1.2" />
+        <line x1="50" y1="55" x2="65" y2="190" stroke="#c4a070" stroke-width="1.2" />
+        <line x1="25" y1="75" x2="50" y2="190" stroke="#c4a070" stroke-width="1.2" />
+        <ellipse cx="80" cy="42" rx="22" ry="28" fill="#ffb07a" />
+        <ellipse cx="80" cy="28" rx="8" ry="6" fill="#ffd4b8" opacity="0.7" />
+        <path d="M80 70 l-4 8 h8 z" fill="#e89050" />
+        <ellipse cx="50" cy="32" rx="20" ry="26" fill="#ff9eb5" />
+        <ellipse cx="50" cy="20" rx="7" ry="5" fill="#ffd0db" opacity="0.7" />
+        <path d="M50 58 l-4 8 h8 z" fill="#f07895" />
+        <ellipse cx="25" cy="48" rx="18" ry="24" fill="#7ed9a0" />
+        <ellipse cx="25" cy="36" rx="6" ry="5" fill="#b8f0cc" opacity="0.7" />
+        <path d="M25 72 l-4 8 h8 z" fill="#4cbc78" />
+      </svg>
+    </div>
+
+    <!-- Decor: music toys -->
+    <div class="decor decor-xylophone" aria-hidden="true">
+      <svg viewBox="0 0 100 70">
+        <rect x="8" y="28" width="12" height="32" rx="2" fill="#f2b8c1" />
+        <rect x="24" y="24" width="12" height="36" rx="2" fill="#f7e6c8" />
+        <rect x="40" y="20" width="12" height="40" rx="2" fill="#d4e8f5" />
+        <rect x="56" y="16" width="12" height="44" rx="2" fill="#e8c4a8" />
+        <rect x="72" y="12" width="12" height="48" rx="2" fill="#c9e4c9" />
+        <line x1="14" y1="8" x2="60" y2="50" stroke="#b8956a" stroke-width="2.5" stroke-linecap="round" />
+        <circle cx="60" cy="50" r="4" fill="#b8956a" />
+      </svg>
+    </div>
+    <div class="decor decor-rattle" aria-hidden="true">
+      <svg viewBox="0 0 60 90">
+        <circle cx="30" cy="28" r="22" fill="#f2b8c1" />
+        <circle cx="22" cy="22" r="5" fill="#fadde2" />
+        <circle cx="38" cy="30" r="4" fill="#e89aa6" />
+        <circle cx="28" cy="36" r="3.5" fill="#f7e6c8" />
+        <rect x="26" y="48" width="8" height="32" rx="3" fill="#c4a070" />
+        <ellipse cx="30" cy="82" rx="10" ry="5" fill="#b8956a" />
+      </svg>
+    </div>
+    <div class="decor decor-notes" aria-hidden="true">
+      <svg viewBox="0 0 80 60" class="notes-svg">
+        <g class="note n1" fill="#b8956a">
+          <ellipse cx="18" cy="42" rx="8" ry="6" />
+          <rect x="24" y="12" width="2.5" height="30" />
+        </g>
+        <g class="note n2" fill="#c98a92">
+          <ellipse cx="48" cy="38" rx="8" ry="6" />
+          <rect x="54" y="8" width="2.5" height="30" />
+          <path d="M56.5 8 h14 v8 h-14" fill="none" stroke="#c98a92" stroke-width="2" />
+        </g>
+      </svg>
+    </div>
+
+    <!-- Decor: florals -->
+    <div class="decor decor-floral top" aria-hidden="true">
+      <svg viewBox="0 0 280 60">
+        <path
+          d="M20 40 Q70 10 140 30 T260 35"
+          fill="none"
+          stroke="#c4a070"
+          stroke-width="1.2"
+          opacity="0.7"
+        />
+        <circle cx="50" cy="28" r="10" fill="#f2b8c1" opacity="0.9" />
+        <circle cx="48" cy="24" r="4" fill="#fadde2" />
+        <circle cx="120" cy="22" r="8" fill="#e8c4a8" />
+        <circle cx="180" cy="28" r="11" fill="#f2b8c1" opacity="0.85" />
+        <circle cx="178" cy="24" r="4" fill="#fadde2" />
+        <circle cx="230" cy="24" r="7" fill="#c9e4c9" />
+        <ellipse cx="90" cy="36" rx="14" ry="6" fill="#b8d4b0" opacity="0.7" transform="rotate(-20 90 36)" />
+        <ellipse cx="200" cy="38" rx="12" ry="5" fill="#b8d4b0" opacity="0.7" transform="rotate(15 200 38)" />
+      </svg>
+    </div>
+    <div class="decor decor-floral bottom" aria-hidden="true">
+      <svg viewBox="0 0 280 50">
+        <path
+          d="M30 20 Q90 40 140 22 T250 28"
+          fill="none"
+          stroke="#c4a070"
+          stroke-width="1.2"
+          opacity="0.65"
+        />
+        <circle cx="70" cy="28" r="9" fill="#f2b8c1" />
+        <circle cx="140" cy="18" r="7" fill="#f7e6c8" />
+        <circle cx="210" cy="30" r="10" fill="#e8c4a8" />
+        <ellipse cx="100" cy="34" rx="12" ry="5" fill="#b8d4b0" opacity="0.65" />
+      </svg>
+    </div>
+
+    <main class="invite">
+      <p class="verse reveal">
+        “I praise you, for I am fearfully and wonderfully made.”
+        <span class="verse-ref">Psalm 139:14</span>
+      </p>
+
+      <div class="ornament reveal" aria-hidden="true">
+        <span class="line"></span>
+        <span class="jewel">✦</span>
+        <span class="line"></span>
+      </div>
+
+      <p class="invite-line reveal">You are invited to celebrate</p>
+
+      <div class="photo-wrap reveal">
+        <div class="photo-frame">
+          <img src="assets/baby.jpg" alt="Nissita Mangam" width="420" height="420" />
+        </div>
+        <div class="cake-one" aria-hidden="true">
+          <svg viewBox="0 0 48 56">
+            <rect x="10" y="28" width="28" height="20" rx="3" fill="#f7e6c8" />
+            <rect x="8" y="22" width="32" height="10" rx="3" fill="#f2b8c1" />
+            <rect x="22" y="8" width="4" height="14" fill="#c4a070" />
+            <ellipse cx="24" cy="8" rx="5" ry="4" fill="#e89aa6" />
+            <text
+              x="24"
+              y="43"
+              text-anchor="middle"
+              font-family="Playfair Display, serif"
+              font-size="14"
+              fill="#6b5252"
+            >
+              1
+            </text>
+          </svg>
+        </div>
+      </div>
+
+      <h1 class="name reveal">Nissita Mangam</h1>
+      <p class="occasion reveal">First Birthday</p>
+      <p class="turns-one reveal">turns ONE</p>
+
+      <section class="details reveal">
+        <p class="detail-date">Saturday, 29th August</p>
+        <p class="detail-time">10:00 AM onwards</p>
+        <p class="detail-lunch">Lunch follows</p>
+        <p class="detail-venue">Cherukuri Convention</p>
+        <p class="detail-address">NH216, Bommuru</p>
+      </section>
+
+      <nav class="actions reveal" aria-label="Invitation actions">
+        <a
+          class="icon-btn"
+          id="maps-btn"
+          href="https://www.google.com/maps/search/?api=1&query=Cherukuri+Convention+NH216+Bommuru"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open in Maps"
+          title="Maps"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 21s-6-5.4-6-10a6 6 0 1 1 12 0c0 4.6-6 10-6 10z"
+            />
+            <circle
+              cx="12"
+              cy="11"
+              r="2.2"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            />
+          </svg>
+        </a>
+        <button
+          type="button"
+          class="icon-btn"
+          id="calendar-btn"
+          aria-label="Add to calendar"
+          title="Calendar"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect
+              x="3.5"
+              y="5"
+              width="17"
+              height="15"
+              rx="2"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            />
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              d="M8 3.5v3M16 3.5v3M3.5 10h17"
+            />
+          </svg>
+        </button>
+        <a
+          class="icon-btn"
+          id="share-btn"
+          href="#"
+          aria-label="Share on WhatsApp"
+          title="WhatsApp"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M12.04 2C6.58 2 2.15 6.4 2.15 11.84c0 1.98.58 3.82 1.58 5.38L2 22l4.94-1.63a9.9 9.9 0 0 0 5.1 1.4h.01c5.46 0 9.89-4.4 9.89-9.84C21.94 6.4 17.5 2 12.04 2zm5.76 13.99c-.24.68-1.4 1.24-1.94 1.32-.5.07-1.14.1-1.84-.12-.42-.13-.97-.28-1.67-.55-2.94-1.27-4.86-4.23-5.01-4.43-.15-.2-1.24-1.65-1.24-3.15s.78-2.23 1.06-2.54c.27-.3.6-.38.8-.38h.58c.18 0 .43-.07.67.51.24.6.82 2.07.89 2.22.07.15.12.33.02.53-.1.2-.15.33-.3.5-.15.18-.31.39-.44.53-.15.15-.3.31-.13.6.17.3.76 1.25 1.63 2.03 1.12 1 2.07 1.31 2.36 1.46.3.15.47.12.64-.07.18-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.72.81 2.01.96.3.15.5.22.57.35.08.12.08.7-.16 1.38z"
+            />
+          </svg>
+        </a>
+        <a
+          class="icon-btn"
+          href="assets/poster.png"
+          download="nissita-first-birthday.png"
+          aria-label="Save invite image"
+          title="Save image"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 4v10M8 10l4 4 4-4M5 18h14"
+            />
+          </svg>
+        </a>
+      </nav>
+
+      <p class="host reveal">With love, The Mangam Family</p>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
