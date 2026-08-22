@@ -244,7 +244,8 @@ body.is-sealed {
   box-shadow: 0 12px 32px var(--shadow);
 }
 
-.hero-photo img {
+.hero-photo img,
+.hero-photo .hero-video {
   width: 100%;
   height: 100%;
   object-fit: cover;

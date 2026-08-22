@@ -309,6 +309,13 @@
 
     startBgmFromGesture(); // must stay in gesture stack (Safari)
 
+    const heroVideo = document.querySelector(".hero-video");
+    if (heroVideo) {
+      heroVideo.muted = true;
+      heroVideo.playsInline = true;
+      heroVideo.play().catch(() => {});
+    }
+
     document.body.classList.remove("is-sealed");
     document.body.classList.add("is-open");
     if (sealGate) sealGate.classList.add("is-open");
