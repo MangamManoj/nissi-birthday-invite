@@ -90,7 +90,6 @@
   let bgmStarted = false;
   let nextNoteTime = 0;
   let schedulerTimer = null;
-  let unlockBound = false;
 
   const G3 = 196.0;
   const A3 = 220.0;
@@ -274,10 +273,8 @@
       if (audioCtx.state === "running" && !bgmStarted) {
         bgmStarted = true;
         startScheduler();
-        detachUnlock();
       } else if (audioCtx.state === "running" && !schedulerTimer) {
         startScheduler();
-        detachUnlock();
       }
     };
 
@@ -286,12 +283,10 @@
       return;
     }
 
-    // resume() may return a promise — still kick scheduler when it resolves
     const p = audioCtx.resume();
     if (p && typeof p.then === "function") {
       p.then(finish).catch(() => {});
     }
-    // Also poll briefly — some iOS versions need a tick
     let tries = 0;
     const poll = setInterval(() => {
       tries++;
@@ -304,38 +299,34 @@
     }, 50);
   }
 
-  function unlockOnGesture(e) {
-    // Keep first gesture synchronous for Safari
-    startBgmFromGesture();
+  /* —— Seal: open invite + start music in same gesture —— */
+  const sealGate = document.getElementById("seal-gate");
+  const openBtn = document.getElementById("open-invite");
+
+  function openInvitation(e) {
+    if (e) e.preventDefault();
+    if (document.body.classList.contains("is-open")) return;
+
+    startBgmFromGesture(); // must stay in gesture stack (Safari)
+
+    document.body.classList.remove("is-sealed");
+    document.body.classList.add("is-open");
+    if (sealGate) sealGate.classList.add("is-open");
+
+    // After fade, remove from tab order
+    setTimeout(() => {
+      if (sealGate) sealGate.setAttribute("hidden", "");
+    }, 600);
   }
 
-  function detachUnlock() {
-    if (unlockBound) return;
-    unlockBound = true;
-    ["touchstart", "touchend", "pointerdown", "mousedown", "keydown", "click"].forEach(
-      (ev) => document.removeEventListener(ev, unlockOnGesture, true)
-    );
+  if (openBtn) {
+    openBtn.addEventListener("click", openInvitation);
+    openBtn.addEventListener("touchend", openInvitation, { passive: false });
   }
-
-  // Capture phase so we unlock even if something stops bubbling
-  ["touchstart", "touchend", "pointerdown", "mousedown", "keydown", "click"].forEach(
-    (ev) => document.addEventListener(ev, unlockOnGesture, { capture: true, passive: true })
-  );
-
-  // Try autoplay on desktop; Safari mobile will stay silent until gesture
-  try {
-    const ctx = ensureAudio();
-    if (ctx) {
-      ctx.resume().then(() => {
-        if (ctx.state === "running") {
-          bgmStarted = true;
-          startScheduler();
-          detachUnlock();
-        }
-      }).catch(() => {});
-    }
-  } catch (_) {
-    /* wait for gesture */
+  if (sealGate) {
+    sealGate.addEventListener("click", (e) => {
+      if (e.target === sealGate) openInvitation(e);
+    });
   }
 
   document.addEventListener("visibilitychange", () => {

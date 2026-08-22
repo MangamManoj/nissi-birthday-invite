@@ -29,6 +29,118 @@ body {
   overflow-x: hidden;
 }
 
+body.is-sealed {
+  overflow: hidden;
+  height: 100dvh;
+}
+
+/* —— Open seal gate —— */
+.seal-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at 50% 30%, #fff 0%, transparent 50%),
+    linear-gradient(165deg, #fff5f8 0%, #ffd6e4 45%, #ffe8c8 100%);
+  transition: opacity 0.55s ease, visibility 0.55s ease;
+}
+
+.seal-gate.is-open {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.seal-card {
+  text-align: center;
+  max-width: 320px;
+  animation: sealPulse 2.8s ease-in-out infinite;
+}
+
+.seal-eyebrow {
+  font-family: "Playfair Display", serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+}
+
+.seal-names {
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(2.4rem, 10vw, 3rem);
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.seal-sub {
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 0.4rem 0 1.6rem;
+  letter-spacing: 0.06em;
+}
+
+.seal-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: "Playfair Display", serif;
+  padding: 0.5rem;
+}
+
+.seal-wax {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  color: #fffaf7;
+  background: radial-gradient(circle at 35% 30%, #ffb3c4, #e85a7a 55%, #c43d5c);
+  box-shadow:
+    0 8px 24px rgba(196, 61, 92, 0.35),
+    inset 0 2px 6px rgba(255, 255, 255, 0.35);
+  border: 2px solid rgba(255, 233, 168, 0.7);
+  transition: transform 0.2s ease;
+}
+
+.seal-btn:hover .seal-wax,
+.seal-btn:focus-visible .seal-wax {
+  transform: scale(1.06);
+}
+
+.seal-btn-text {
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+}
+
+.seal-hint {
+  margin-top: 1.1rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  opacity: 0.85;
+}
+
+@keyframes sealPulse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+
 #petals {
   position: fixed;
   inset: 0;
