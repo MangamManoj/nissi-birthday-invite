@@ -812,6 +812,10 @@ body.is-sealed #petals {
 }
 
 .icon-btn.bless-heart {
+  border-color: #e85a7a;
+  color: #e85a7a;
+  background: rgba(255, 236, 242, 0.95);
+  box-shadow: 0 2px 12px rgba(232, 90, 122, 0.28);
   animation: heartGlow 1.15s ease-in-out infinite;
   overflow: visible;
 }
@@ -926,23 +930,23 @@ body.is-sealed #petals {
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 2px 10px var(--shadow);
+    box-shadow: 0 2px 12px rgba(232, 90, 122, 0.28);
   }
   14% {
     transform: scale(1.16);
-    box-shadow: 0 4px 18px rgba(232, 90, 122, 0.4);
+    box-shadow: 0 4px 20px rgba(232, 90, 122, 0.5);
   }
   28% {
     transform: scale(1);
-    box-shadow: 0 2px 10px var(--shadow);
+    box-shadow: 0 2px 12px rgba(232, 90, 122, 0.28);
   }
   42% {
     transform: scale(1.12);
-    box-shadow: 0 4px 16px rgba(232, 90, 122, 0.32);
+    box-shadow: 0 4px 18px rgba(232, 90, 122, 0.42);
   }
   70% {
     transform: scale(1);
-    box-shadow: 0 2px 10px var(--shadow);
+    box-shadow: 0 2px 12px rgba(232, 90, 122, 0.28);
   }
 }
 
