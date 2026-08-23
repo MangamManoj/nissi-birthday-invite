@@ -752,12 +752,17 @@ body.is-sealed #petals {
 }
 
 .detail-venue {
-  font-size: 1.15rem;
+  font-family: "Playfair Display", serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink);
 }
 
 .detail-address {
   font-size: 1rem;
   color: var(--ink-soft);
+  margin-top: 0.25rem;
 }
 
 .actions {
