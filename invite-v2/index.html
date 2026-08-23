@@ -6,12 +6,12 @@
     <meta name="theme-color" content="#ffe4ec" />
     <meta
       name="description"
-      content="You’re invited to celebrate Nissita Mangam’s first birthday — Saturday, 29th August, 10:00 AM at Cherukuri Convention."
+      content="You’re invited to celebrate Nissita Mangam’s first birthday — Saturday, 29th August, 10:30 AM at Cherukuri Convention."
     />
     <meta property="og:title" content="Nissita Mangam — First Birthday" />
     <meta
       property="og:description"
-      content="Saturday, 29th August · 10:00 AM · Cherukuri Convention, Bommuru"
+      content="Saturday, 29th August · 10:30 AM · Cherukuri Convention, Bommuru"
     />
     <meta property="og:image" content="assets/baby.jpg" />
     <title>Nissita Mangam — First Birthday (v2)</title>
@@ -27,15 +27,39 @@
     <canvas id="petals" aria-hidden="true"></canvas>
 
     <div id="seal-gate" class="seal-gate" role="dialog" aria-modal="true" aria-label="Open invitation">
-      <div class="seal-card">
-        <p class="seal-eyebrow">With love</p>
-        <p class="seal-names">Nissita Mangam</p>
-        <p class="seal-sub">turns ONE</p>
-        <button type="button" id="open-invite" class="seal-btn">
-          <span class="seal-wax" aria-hidden="true">✦</span>
-          <span class="seal-btn-text">Tap to open invitation</span>
-        </button>
-        <p class="seal-hint">Music begins when you open</p>
+      <div class="seal-peek" aria-hidden="true">
+        <video
+          class="peek-video"
+          src="assets/baby.mp4"
+          poster="assets/baby.jpg"
+          muted
+          loop
+          playsinline
+          webkit-playsinline
+          preload="metadata"
+        ></video>
+      </div>
+
+      <div class="envelope">
+        <div class="envelope-inner">
+          <p class="seal-eyebrow">With love</p>
+          <p class="seal-names">
+            <span class="cap">N</span>issita <span class="cap">M</span>angam
+          </p>
+          <p class="seal-sub">turns ONE</p>
+
+          <button type="button" id="open-invite" class="seal-btn" aria-label="Open invitation">
+            <span class="seal-ring" aria-hidden="true"></span>
+            <span class="seal-wax" aria-hidden="true">✦</span>
+            <span class="seal-btn-text">Open invitation</span>
+          </button>
+        </div>
+        <div class="envelope-corners" aria-hidden="true">
+          <span class="ec tl"></span>
+          <span class="ec tr"></span>
+          <span class="ec bl"></span>
+          <span class="ec br"></span>
+        </div>
       </div>
     </div>
 
@@ -86,8 +110,8 @@
             aria-label="Nissita Mangam"
           ></video>
           <div class="hero-band">
-            <p class="invite-line">You’re cordially invited</p>
-            <h1 class="name">Nissita Mangam</h1>
+            <p class="invite-line">Come celebrate our little blessing</p>
+            <h1 class="name"><span class="cap">N</span>issita <span class="cap">M</span>angam</h1>
             <p class="turns-one">turns ONE</p>
           </div>
         </div>
@@ -95,21 +119,16 @@
 
       <section class="details">
         <p class="detail-date">Saturday, 29th August</p>
-        <p class="detail-time">10:00 AM onwards</p>
+        <p class="detail-time">10:30 AM onwards</p>
         <p class="detail-lunch">Lunch follows</p>
         <p class="detail-venue">Cherukuri Convention</p>
-        <p class="detail-address">NH216, Bommuru</p>
-      </section>
-
-      <nav class="actions" aria-label="Invitation actions">
+        <p class="detail-address">NH216A, Bommuru</p>
         <a
-          class="icon-btn"
+          class="maps-cta"
           id="maps-btn"
-          href="https://www.google.com/maps/search/?api=1&query=Cherukuri+Convention+NH216+Bommuru"
+          href="https://www.google.com/maps/search/?api=1&query=Cherukuri+Convention+NH216A+Bommuru"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Open in Maps"
-          title="Maps"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
@@ -129,7 +148,36 @@
               stroke-width="1.6"
             />
           </svg>
+          Open in Google Maps
         </a>
+
+        <div class="countdown" id="countdown" aria-label="Countdown to the celebration">
+          <p class="countdown-label">Begins in</p>
+          <div class="countdown-grid">
+            <div class="countdown-cell">
+              <span class="countdown-num" id="cd-days">00</span>
+              <span class="countdown-unit">d</span>
+            </div>
+            <span class="countdown-sep" aria-hidden="true">:</span>
+            <div class="countdown-cell">
+              <span class="countdown-num" id="cd-hours">00</span>
+              <span class="countdown-unit">h</span>
+            </div>
+            <span class="countdown-sep" aria-hidden="true">:</span>
+            <div class="countdown-cell">
+              <span class="countdown-num" id="cd-mins">00</span>
+              <span class="countdown-unit">m</span>
+            </div>
+            <span class="countdown-sep" aria-hidden="true">:</span>
+            <div class="countdown-cell">
+              <span class="countdown-num" id="cd-secs">00</span>
+              <span class="countdown-unit">s</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <nav class="actions" aria-label="Invitation actions">
         <button
           type="button"
           class="icon-btn"
@@ -171,29 +219,21 @@
             />
           </svg>
         </a>
-        <a
-          class="icon-btn"
-          href="assets/poster.png"
-          download="nissita-first-birthday.png"
-          aria-label="Save invite image"
-          title="Save image"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.6"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 4v10M8 10l4 4 4-4M5 18h14"
-            />
-          </svg>
-        </a>
       </nav>
+
+      <button type="button" id="bless-btn" class="bless-btn">
+        <span class="bless-btn-glow" aria-hidden="true"></span>
+        <span class="bless-btn-label">Shower Blessings</span>
+      </button>
+      <p class="bless-count" aria-live="polite">
+        <span id="bless-total">0</span> blessings showered with love
+      </p>
+      <p id="bless-note" class="bless-note" hidden>Amen — petals of blessing for Nissita</p>
 
       <p class="host">With love, The Mangam Family</p>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

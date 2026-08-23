@@ -11,15 +11,17 @@
   const ctx = canvas.getContext("2d");
   let petals = [];
   let petalRaf = 0;
-  let petalsPaused = false;
-  const PETAL_COUNT = 28;
+  let petalsPaused = true; // start quiet behind seal; burst on open
+  const PETAL_COUNT = 32;
+  const PETAL_MAX = 140;
 
   const petalColors = [
-    "rgba(255, 130, 160, 0.8)",
-    "rgba(255, 210, 100, 0.75)",
-    "rgba(255, 170, 140, 0.75)",
-    "rgba(120, 200, 255, 0.65)",
-    "rgba(255, 255, 255, 0.7)",
+    "rgba(255, 130, 160, 0.85)",
+    "rgba(255, 210, 100, 0.8)",
+    "rgba(255, 170, 140, 0.8)",
+    "rgba(120, 200, 255, 0.7)",
+    "rgba(255, 255, 255, 0.75)",
+    "rgba(242, 184, 193, 0.85)",
   ];
 
   function resizeCanvas() {
@@ -30,21 +32,52 @@
     ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
   }
 
-  function makePetal() {
+  function makePetal(burst, origin) {
+    const fromBtn = burst && origin;
+    // Party-popper cone: shoot upward (±~50°) then fall
+    const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.05;
+    const force = fromBtn ? 11 + Math.random() * 16 : 0;
     return {
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * -window.innerHeight,
-      r: 4 + Math.random() * 7,
-      speed: 0.4 + Math.random() * 0.9,
-      drift: -0.4 + Math.random() * 0.8,
+      x: fromBtn
+        ? origin.x + (Math.random() - 0.5) * 18
+        : Math.random() * window.innerWidth,
+      y: fromBtn
+        ? origin.y - 4
+        : burst
+          ? -30 - Math.random() * window.innerHeight * 0.35
+          : Math.random() * -window.innerHeight,
+      r: (burst ? 5 : 4) + Math.random() * (burst ? 11 : 7),
+      vx: fromBtn
+        ? Math.cos(angle) * force
+        : -1.2 + Math.random() * 2.4,
+      vy: fromBtn
+        ? Math.sin(angle) * force
+        : burst
+          ? 2.8 + Math.random() * 4.2
+          : 0.45 + Math.random() * 0.95,
+      gravity: fromBtn ? 0.28 + Math.random() * 0.18 : 0,
+      drift: fromBtn ? 0 : -0.4 + Math.random() * 0.8,
       rot: Math.random() * Math.PI * 2,
-      spin: -0.02 + Math.random() * 0.04,
+      spin: -0.12 + Math.random() * 0.24,
       color: petalColors[(Math.random() * petalColors.length) | 0],
+      burst: !!burst,
+      fromBtn: !!fromBtn,
     };
   }
 
   function initPetals() {
-    petals = Array.from({ length: PETAL_COUNT }, makePetal);
+    petals = Array.from({ length: PETAL_COUNT }, () => makePetal(false));
+  }
+
+  function burstPetals(count, origin) {
+    petalsPaused = false;
+    const n = count || 70;
+    for (let i = 0; i < n; i++) {
+      petals.push(makePetal(true, origin));
+    }
+    if (petals.length > PETAL_MAX) {
+      petals = petals.slice(petals.length - PETAL_MAX);
+    }
   }
 
   function drawPetal(p) {
@@ -60,19 +93,41 @@
 
   function tickPetals() {
     if (petalsPaused) {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       petalRaf = requestAnimationFrame(tickPetals);
       return;
     }
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    const next = [];
     for (const p of petals) {
-      p.y += p.speed;
-      p.x += p.drift + Math.sin(p.y * 0.01) * 0.3;
+      if (p.fromBtn) {
+        p.vy += p.gravity;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.992;
+        // soft air drag near the top so they hang then rain down
+        if (p.vy > 0) p.vy *= 0.995;
+      } else {
+        p.y += p.vy || p.speed || 0.8;
+        p.x += (p.drift || 0) + Math.sin(p.y * 0.012) * 0.45;
+      }
       p.rot += p.spin;
-      if (p.y > window.innerHeight + 20) {
+      if (
+        p.y > window.innerHeight + 30 ||
+        p.x < -40 ||
+        p.x > window.innerWidth + 40
+      ) {
+        if (p.burst) continue;
         p.y = -20;
         p.x = Math.random() * window.innerWidth;
+        p.vy = 0.45 + Math.random() * 0.95;
       }
+      next.push(p);
       drawPetal(p);
+    }
+    petals = next;
+    while (petals.filter((p) => !p.burst).length < PETAL_COUNT) {
+      petals.push(makePetal(false));
     }
     petalRaf = requestAnimationFrame(tickPetals);
   }
@@ -316,14 +371,24 @@
       heroVideo.play().catch(() => {});
     }
 
+    if (sealGate) sealGate.classList.add("is-opening");
+
     document.body.classList.remove("is-sealed");
     document.body.classList.add("is-open");
     if (sealGate) sealGate.classList.add("is-open");
 
-    // After fade, remove from tab order
+    burstPetals(85);
+
     setTimeout(() => {
       if (sealGate) sealGate.setAttribute("hidden", "");
-    }, 600);
+    }, 650);
+  }
+
+  // Start peek video (muted) for suspense
+  const peekVideo = document.querySelector(".peek-video");
+  if (peekVideo) {
+    peekVideo.muted = true;
+    peekVideo.play().catch(() => {});
   }
 
   if (openBtn) {
@@ -331,8 +396,162 @@
     openBtn.addEventListener("touchend", openInvitation, { passive: false });
   }
   if (sealGate) {
-    sealGate.addEventListener("click", (e) => {
-      if (e.target === sealGate) openInvitation(e);
+    // Whole envelope is clickable for a bigger hit target
+    sealGate.querySelector(".envelope")?.addEventListener("click", (e) => {
+      if (e.target.closest("a")) return;
+      openInvitation(e);
+    });
+  }
+
+  const blessBtn = document.getElementById("bless-btn");
+  const blessNote = document.getElementById("bless-note");
+  const blessTotalEl = document.getElementById("bless-total");
+  const BLESS_KEY = "nissita-blessings-v1";
+  // Shared counter (no API key) — all guests see the same rising total
+  const BLESS_GET =
+    "https://abacus.jasoncameron.dev/get/nissita-birthday-invite/blessings";
+  const BLESS_HIT =
+    "https://abacus.jasoncameron.dev/hit/nissita-birthday-invite/blessings";
+
+  function readLocalBlessings() {
+    const n = parseInt(localStorage.getItem(BLESS_KEY) || "0", 10);
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  }
+
+  function writeLocalBlessings(n) {
+    localStorage.setItem(BLESS_KEY, String(n));
+  }
+
+  function renderBlessings(n) {
+    if (blessTotalEl) {
+      blessTotalEl.textContent = String(n);
+      blessTotalEl.classList.remove("pop");
+      // reflow for pop animation
+      void blessTotalEl.offsetWidth;
+      blessTotalEl.classList.add("pop");
+    }
+  }
+
+  async function fetchBlessings() {
+    try {
+      const res = await fetch(BLESS_GET, { cache: "no-store" });
+      if (!res.ok) throw new Error("counter get failed");
+      const data = await res.json();
+      const value = Number(data.value ?? data.count ?? 0);
+      if (Number.isFinite(value)) {
+        const merged = Math.max(value, readLocalBlessings());
+        writeLocalBlessings(merged);
+        renderBlessings(merged);
+        return merged;
+      }
+    } catch (_) {
+      /* use local */
+    }
+    const local = readLocalBlessings();
+    renderBlessings(local);
+    return local;
+  }
+
+  async function incrementBlessings() {
+    // Optimistic UI so every tap feels instant
+    let next = readLocalBlessings() + 1;
+    renderBlessings(next);
+    writeLocalBlessings(next);
+
+    try {
+      const res = await fetch(BLESS_HIT, { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        const value = Number(data.value ?? data.count ?? next);
+        if (Number.isFinite(value)) {
+          next = Math.max(value, next);
+          writeLocalBlessings(next);
+          renderBlessings(next);
+        }
+      }
+    } catch (_) {
+      /* local count already updated */
+    }
+    return next;
+  }
+
+  fetchBlessings();
+
+  let blessTaps = 0;
+  const BLESS_COLORS = [
+    "#e85a7a",
+    "#ff9eb5",
+    "#e8b923",
+    "#ffe08a",
+    "#ffb3c4",
+    "#fffaf7",
+    "#f2b8c1",
+  ];
+
+  /** Same library/feel as the wedding invite — party-popper confetti from the button */
+  function showerBlessingsFromButton(btn, taps) {
+    const rect = btn.getBoundingClientRect();
+    const origin = {
+      x: (rect.left + rect.width / 2) / Math.max(window.innerWidth, 1),
+      y: (rect.top + rect.height / 2) / Math.max(window.innerHeight, 1),
+    };
+    const particleCount = Math.min(50 + taps * 14, 130);
+
+    if (typeof confetti === "function") {
+      confetti({
+        particleCount,
+        spread: 80,
+        startVelocity: 52,
+        gravity: 0.85,
+        ticks: 240,
+        decay: 0.9,
+        origin,
+        colors: BLESS_COLORS,
+        disableForReducedMotion: true,
+      });
+      // Second wave — fuller popper (wedding-style richness)
+      setTimeout(() => {
+        confetti({
+          particleCount: Math.floor(particleCount * 0.5),
+          spread: 100,
+          startVelocity: 36,
+          gravity: 0.95,
+          ticks: 200,
+          origin,
+          colors: BLESS_COLORS,
+          disableForReducedMotion: true,
+        });
+      }, 100);
+    } else {
+      // Fallback if CDN blocked
+      burstPetals(particleCount, {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      });
+    }
+  }
+
+  if (blessBtn) {
+    blessBtn.style.position = "relative";
+    blessBtn.addEventListener("click", (event) => {
+      blessTaps += 1;
+      showerBlessingsFromButton(blessBtn, blessTaps);
+
+      // Floating +1 on the button (same pattern as wedding invite)
+      const plus = document.createElement("span");
+      plus.className = "floating-plus";
+      plus.textContent = "+1";
+      blessBtn.appendChild(plus);
+      setTimeout(() => plus.remove(), 1000);
+
+      incrementBlessings();
+      if (blessNote) {
+        blessNote.hidden = false;
+        clearTimeout(blessNote._hideTimer);
+        blessNote._hideTimer = setTimeout(() => {
+          blessNote.hidden = true;
+        }, 2200);
+      }
     });
   }
 
@@ -357,8 +576,8 @@
     const url = window.location.href.split("#")[0];
     return (
       "You’re invited to celebrate Nissita Mangam’s first birthday!\n" +
-      "Saturday, 29th August · 10:00 AM onwards\n" +
-      "Cherukuri Convention, NH216, Bommuru\n" +
+      "Saturday, 29th August · 10:30 AM onwards\n" +
+      "Cherukuri Convention, NH216A, Bommuru\n" +
       "Lunch follows.\n\n" +
       "Open invitation: " +
       url
@@ -388,7 +607,7 @@
   });
 
   function buildIcs() {
-    // 29 Aug 2026 10:00 IST (UTC+5:30) → 04:30 UTC
+    // 29 Aug 2026 10:30 IST (UTC+5:30) → 05:00 UTC
     const uid = "nissita-first-birthday@" + location.hostname;
     const ics = [
       "BEGIN:VCALENDAR",
@@ -399,11 +618,11 @@
       "BEGIN:VEVENT",
       "UID:" + uid,
       "DTSTAMP:20260822T000000Z",
-      "DTSTART:20260829T043000Z",
-      "DTEND:20260829T073000Z",
+      "DTSTART:20260829T050000Z",
+      "DTEND:20260829T080000Z",
       "SUMMARY:Nissita Mangam — First Birthday",
       "DESCRIPTION:Lunch follows. You are invited to celebrate!",
-      "LOCATION:Cherukuri Convention\\, NH216\\, Bommuru",
+      "LOCATION:Cherukuri Convention\\, NH216A\\, Bommuru",
       "END:VEVENT",
       "END:VCALENDAR",
     ].join("\r\n");
@@ -421,4 +640,43 @@
     a.remove();
     URL.revokeObjectURL(url);
   });
+
+  /* —— Countdown to 29 Aug 2026, 10:30 AM IST —— */
+  const EVENT_IST_MS = Date.parse("2026-08-29T10:30:00+05:30");
+  const cdRoot = document.getElementById("countdown");
+  const cdDays = document.getElementById("cd-days");
+  const cdHours = document.getElementById("cd-hours");
+  const cdMins = document.getElementById("cd-mins");
+  const cdSecs = document.getElementById("cd-secs");
+  const cdLabel = cdRoot ? cdRoot.querySelector(".countdown-label") : null;
+
+  function pad2(n) {
+    return String(Math.max(0, n)).padStart(2, "0");
+  }
+
+  function tickCountdown() {
+    if (!cdDays || !cdHours || !cdMins || !cdSecs) return;
+    const diff = EVENT_IST_MS - Date.now();
+    if (diff <= 0) {
+      cdDays.textContent = "00";
+      cdHours.textContent = "00";
+      cdMins.textContent = "00";
+      cdSecs.textContent = "00";
+      if (cdLabel) cdLabel.textContent = "The celebration has begun";
+      if (cdRoot) cdRoot.classList.add("is-live");
+      return;
+    }
+    const totalSec = Math.floor(diff / 1000);
+    const days = Math.floor(totalSec / 86400);
+    const hours = Math.floor((totalSec % 86400) / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = totalSec % 60;
+    cdDays.textContent = pad2(days);
+    cdHours.textContent = pad2(hours);
+    cdMins.textContent = pad2(mins);
+    cdSecs.textContent = pad2(secs);
+  }
+
+  tickCountdown();
+  setInterval(tickCountdown, 1000);
 })();
