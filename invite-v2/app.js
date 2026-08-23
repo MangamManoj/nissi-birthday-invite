@@ -451,10 +451,15 @@
   const sealGate = document.getElementById("seal-gate");
   const sealBackdrop = document.getElementById("seal-backdrop");
   const openBtn = document.getElementById("open-invite");
+  let inviteOpening = false;
 
   function openInvitation(e) {
-    if (e) e.preventDefault();
-    if (document.body.classList.contains("is-open")) return;
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (inviteOpening || document.body.classList.contains("is-open")) return;
+    inviteOpening = true;
 
     startBgmFromGesture(); // must stay in gesture stack (Safari)
 
@@ -475,6 +480,8 @@
     setPetalMode("ambient");
     // Same party-popper style & size as Shower Blessings
     partyPopperFrom(openBtn || { x: 0.5, y: 0.55 }, 110);
+
+    recordUniqueOpen();
 
     setTimeout(() => {
       if (sealGate) sealGate.setAttribute("hidden", "");
@@ -573,6 +580,72 @@
   }
 
   fetchBlessings();
+
+  /* —— Unique device opens (hidden stats) —— */
+  const OPENED_KEY = "nissita-opened-v1";
+  const UNIQUE_GET =
+    "https://abacus.jasoncameron.dev/get/nissita-birthday-invite/unique-opens";
+  const UNIQUE_HIT =
+    "https://abacus.jasoncameron.dev/hit/nissita-birthday-invite/unique-opens";
+  const uniqueOpensEl = document.getElementById("unique-opens");
+  const inviteStatsEl = document.getElementById("invite-stats");
+  let uniqueHitSent = false;
+
+  function renderUniqueOpens(n) {
+    if (uniqueOpensEl && Number.isFinite(n)) {
+      uniqueOpensEl.textContent = String(n);
+    }
+  }
+
+  async function fetchUniqueOpens() {
+    try {
+      const res = await fetch(UNIQUE_GET, { cache: "no-store" });
+      if (!res.ok) throw new Error("unique get failed");
+      const data = await res.json();
+      const value = Number(data.value ?? data.count ?? 0);
+      if (Number.isFinite(value)) {
+        renderUniqueOpens(value);
+        return value;
+      }
+    } catch (_) {
+      /* ignore */
+    }
+    return null;
+  }
+
+  async function recordUniqueOpen() {
+    // Same browser/device should only count once
+    if (uniqueHitSent || localStorage.getItem(OPENED_KEY) === "1") {
+      fetchUniqueOpens();
+      return;
+    }
+    uniqueHitSent = true;
+    try {
+      localStorage.setItem(OPENED_KEY, "1");
+    } catch (_) {
+      /* private mode */
+    }
+    try {
+      const res = await fetch(UNIQUE_HIT, { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        const value = Number(data.value ?? data.count ?? 0);
+        if (Number.isFinite(value)) renderUniqueOpens(value);
+      }
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
+  // Show only with ?stats=1 (for your reference) — number only, corner chip
+  if (inviteStatsEl) {
+    const showStats = new URLSearchParams(location.search).has("stats");
+    if (showStats) {
+      inviteStatsEl.hidden = false;
+      inviteStatsEl.removeAttribute("hidden");
+      fetchUniqueOpens();
+    }
+  }
 
   let blessTaps = 0;
 
