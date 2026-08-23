@@ -812,22 +812,22 @@ body.is-sealed #petals {
 }
 
 .icon-btn.bless-heart {
-  animation: heartGlow 1.6s ease-in-out infinite;
+  animation: heartGlow 1.15s ease-in-out infinite;
   overflow: visible;
 }
 
 .bless-heart-glow {
   position: absolute;
-  inset: -4px;
+  inset: -6px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(255, 158, 181, 0.45) 0%,
-    rgba(232, 90, 122, 0.18) 45%,
-    transparent 70%
+    rgba(255, 158, 181, 0.7) 0%,
+    rgba(232, 90, 122, 0.35) 42%,
+    transparent 72%
   );
   z-index: 0;
-  animation: heartHalo 1.6s ease-out infinite;
+  animation: heartHalo 1.15s ease-out infinite;
   pointer-events: none;
 }
 
@@ -837,8 +837,9 @@ body.is-sealed #petals {
   width: 22px;
   height: 22px;
   fill: currentColor;
-  filter: none;
+  filter: drop-shadow(0 0 6px rgba(232, 90, 122, 0.45));
   transition: transform 0.15s ease;
+  animation: heartIconBeat 1.15s ease-in-out infinite;
 }
 
 .icon-btn.bless-heart:hover,
@@ -875,10 +876,11 @@ body.is-sealed #petals {
   text-align: center;
   font-family: "Cormorant Garamond", serif;
   font-style: italic;
-  font-size: 0.82rem;
+  font-size: 1rem;
+  font-weight: 500;
   letter-spacing: 0.04em;
-  color: var(--ink-soft);
-  margin: 0 1rem 0.35rem;
+  color: #c43d5c;
+  margin: 0.15rem 1rem 0.45rem;
 }
 
 .bless-note {
@@ -924,23 +926,56 @@ body.is-sealed #petals {
   0%,
   100% {
     transform: scale(1);
+    box-shadow: 0 2px 10px var(--shadow);
   }
-  50% {
-    transform: scale(1.08);
+  14% {
+    transform: scale(1.16);
+    box-shadow: 0 4px 18px rgba(232, 90, 122, 0.4);
+  }
+  28% {
+    transform: scale(1);
+    box-shadow: 0 2px 10px var(--shadow);
+  }
+  42% {
+    transform: scale(1.12);
+    box-shadow: 0 4px 16px rgba(232, 90, 122, 0.32);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 2px 10px var(--shadow);
+  }
+}
+
+@keyframes heartIconBeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.18);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.12);
+  }
+  70% {
+    transform: scale(1);
   }
 }
 
 @keyframes heartHalo {
   0% {
-    transform: scale(0.75);
-    opacity: 0.85;
+    transform: scale(0.7);
+    opacity: 0.95;
   }
-  65% {
-    transform: scale(1.55);
+  55% {
+    transform: scale(1.85);
     opacity: 0;
   }
   100% {
-    transform: scale(1.55);
+    transform: scale(1.85);
     opacity: 0;
   }
 }
@@ -959,7 +994,8 @@ body.is-sealed #petals {
 
 @media (prefers-reduced-motion: reduce) {
   .icon-btn.bless-heart,
-  .bless-heart-glow {
+  .bless-heart-glow,
+  .bless-heart-icon {
     animation: none;
   }
 }
