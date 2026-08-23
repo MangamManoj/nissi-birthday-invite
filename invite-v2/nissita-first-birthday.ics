@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Mangam Family//Nissita First Birthday//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:nissita-first-birthday@mangam
+DTSTAMP:20260822T000000Z
+DTSTART:20260829T050000Z
+DTEND:20260829T080000Z
+SUMMARY:Nissita Mangam — First Birthday
+DESCRIPTION:Lunch follows. You are invited to celebrate!
+LOCATION:Cherukuri Convention\, NH216A\, Bommuru\, Rajahmundry
+END:VEVENT
+END:VCALENDAR

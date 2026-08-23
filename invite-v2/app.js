@@ -11,8 +11,10 @@
   const ctx = canvas.getContext("2d");
   let petals = [];
   let petalRaf = 0;
-  let petalsPaused = true; // start quiet behind seal; burst on open
-  const PETAL_COUNT = 32;
+  let petalsPaused = false; // big shower on landing; quieter after open
+  let petalMode = "landing"; // landing | ambient
+  const LANDING_PETAL_COUNT = 22;
+  const PETAL_COUNT = 9;
   const PETAL_MAX = 140;
 
   const petalColors = [
@@ -32,8 +34,13 @@
     ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
   }
 
+  function ambientCount() {
+    return petalMode === "landing" ? LANDING_PETAL_COUNT : PETAL_COUNT;
+  }
+
   function makePetal(burst, origin) {
     const fromBtn = burst && origin;
+    const landing = !burst && petalMode === "landing";
     // Party-popper cone: shoot upward (±~50°) then fall
     const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.05;
     const force = fromBtn ? 11 + Math.random() * 16 : 0;
@@ -46,7 +53,12 @@
         : burst
           ? -30 - Math.random() * window.innerHeight * 0.35
           : Math.random() * -window.innerHeight,
-      r: (burst ? 5 : 4) + Math.random() * (burst ? 11 : 7),
+      // Landing & ambient share the same petal size; burst/bless stay smaller
+      r: fromBtn
+        ? 2.2 + Math.random() * 3.2
+        : burst
+          ? 2.2 + Math.random() * 3.2
+          : 4 + Math.random() * 5,
       vx: fromBtn
         ? Math.cos(angle) * force
         : -1.2 + Math.random() * 2.4,
@@ -54,7 +66,9 @@
         ? Math.sin(angle) * force
         : burst
           ? 2.8 + Math.random() * 4.2
-          : 0.45 + Math.random() * 0.95,
+          : landing
+            ? 0.4 + Math.random() * 0.85
+            : 0.32 + Math.random() * 0.7,
       gravity: fromBtn ? 0.28 + Math.random() * 0.18 : 0,
       drift: fromBtn ? 0 : -0.4 + Math.random() * 0.8,
       rot: Math.random() * Math.PI * 2,
@@ -66,7 +80,19 @@
   }
 
   function initPetals() {
-    petals = Array.from({ length: PETAL_COUNT }, () => makePetal(false));
+    petals = Array.from({ length: ambientCount() }, () => makePetal(false));
+  }
+
+  function setPetalMode(mode) {
+    petalMode = mode;
+    // Keep burst petals; rebuild ambient set for the new mode
+    const bursts = petals.filter((p) => p.burst);
+    petals = bursts.concat(
+      Array.from({ length: ambientCount() }, () => makePetal(false))
+    );
+    if (petals.length > PETAL_MAX) {
+      petals = petals.slice(petals.length - PETAL_MAX);
+    }
   }
 
   function burstPetals(count, origin) {
@@ -99,6 +125,7 @@
     }
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     const next = [];
+    const targetAmbient = ambientCount();
     for (const p of petals) {
       if (p.fromBtn) {
         p.vy += p.gravity;
@@ -113,20 +140,24 @@
       }
       p.rot += p.spin;
       if (
-        p.y > window.innerHeight + 30 ||
-        p.x < -40 ||
-        p.x > window.innerWidth + 40
+        p.y > window.innerHeight + 40 ||
+        p.x < -50 ||
+        p.x > window.innerWidth + 50
       ) {
         if (p.burst) continue;
-        p.y = -20;
+        p.y = -20 - Math.random() * 40;
         p.x = Math.random() * window.innerWidth;
-        p.vy = 0.45 + Math.random() * 0.95;
+        p.vy =
+          petalMode === "landing"
+            ? 0.4 + Math.random() * 0.85
+            : 0.32 + Math.random() * 0.7;
+        p.r = 4 + Math.random() * 5;
       }
       next.push(p);
       drawPetal(p);
     }
     petals = next;
-    while (petals.filter((p) => !p.burst).length < PETAL_COUNT) {
+    while (petals.filter((p) => !p.burst).length < targetAmbient) {
       petals.push(makePetal(false));
     }
     petalRaf = requestAnimationFrame(tickPetals);
@@ -354,8 +385,71 @@
     }, 50);
   }
 
+  /* —— Party popper (shared by open + Shower Blessings) —— */
+  const PARTY_COLORS = [
+    "#e85a7a",
+    "#ff9eb5",
+    "#e8b923",
+    "#ffe08a",
+    "#ffb3c4",
+    "#fffaf7",
+    "#f2b8c1",
+  ];
+
+  function partyPopperFrom(originOrEl, particleCount) {
+    let origin;
+    let fallbackXY;
+    if (originOrEl && typeof originOrEl.getBoundingClientRect === "function") {
+      const rect = originOrEl.getBoundingClientRect();
+      fallbackXY = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      };
+      origin = {
+        x: fallbackXY.x / Math.max(window.innerWidth, 1),
+        y: fallbackXY.y / Math.max(window.innerHeight, 1),
+      };
+    } else {
+      origin = originOrEl || { x: 0.5, y: 0.55 };
+      fallbackXY = {
+        x: origin.x * window.innerWidth,
+        y: origin.y * window.innerHeight,
+      };
+    }
+    const count = particleCount || 90;
+
+    if (typeof confetti === "function") {
+      confetti({
+        particleCount: count,
+        spread: 80,
+        startVelocity: 52,
+        gravity: 0.85,
+        ticks: 240,
+        decay: 0.9,
+        origin,
+        colors: PARTY_COLORS,
+        disableForReducedMotion: true,
+      });
+      setTimeout(() => {
+        confetti({
+          particleCount: Math.floor(count * 0.5),
+          spread: 100,
+          startVelocity: 36,
+          gravity: 0.95,
+          ticks: 200,
+          origin,
+          colors: PARTY_COLORS,
+          disableForReducedMotion: true,
+        });
+      }, 100);
+    } else {
+      burstPetals(count, fallbackXY);
+    }
+  }
+
   /* —— Seal: open invite + start music in same gesture —— */
   const sealGate = document.getElementById("seal-gate");
+  const sealBackdrop = document.getElementById("seal-backdrop");
   const openBtn = document.getElementById("open-invite");
 
   function openInvitation(e) {
@@ -376,31 +470,34 @@
     document.body.classList.remove("is-sealed");
     document.body.classList.add("is-open");
     if (sealGate) sealGate.classList.add("is-open");
+    if (sealBackdrop) sealBackdrop.classList.add("is-open");
 
-    burstPetals(85);
+    setPetalMode("ambient");
+    // Same party-popper style & size as Shower Blessings
+    partyPopperFrom(openBtn || { x: 0.5, y: 0.55 }, 110);
 
     setTimeout(() => {
       if (sealGate) sealGate.setAttribute("hidden", "");
+      if (sealBackdrop) sealBackdrop.setAttribute("hidden", "");
     }, 650);
   }
 
-  // Start peek video (muted) for suspense
-  const peekVideo = document.querySelector(".peek-video");
-  if (peekVideo) {
-    peekVideo.muted = true;
-    peekVideo.play().catch(() => {});
-  }
+  // Landing uses a still photo backdrop (no peek video)
+  // Hero video still starts on open below.
 
   if (openBtn) {
     openBtn.addEventListener("click", openInvitation);
     openBtn.addEventListener("touchend", openInvitation, { passive: false });
   }
   if (sealGate) {
-    // Whole envelope is clickable for a bigger hit target
-    sealGate.querySelector(".envelope")?.addEventListener("click", (e) => {
-      if (e.target.closest("a")) return;
-      openInvitation(e);
-    });
+    // Whole landing surface opens the invite
+    sealGate.addEventListener("click", openInvitation);
+    sealGate.addEventListener("touchend", openInvitation, { passive: false });
+  }
+  if (sealBackdrop) {
+    sealBackdrop.style.pointerEvents = "auto";
+    sealBackdrop.addEventListener("click", openInvitation);
+    sealBackdrop.addEventListener("touchend", openInvitation, { passive: false });
   }
 
   const blessBtn = document.getElementById("bless-btn");
@@ -478,57 +575,10 @@
   fetchBlessings();
 
   let blessTaps = 0;
-  const BLESS_COLORS = [
-    "#e85a7a",
-    "#ff9eb5",
-    "#e8b923",
-    "#ffe08a",
-    "#ffb3c4",
-    "#fffaf7",
-    "#f2b8c1",
-  ];
 
-  /** Same library/feel as the wedding invite — party-popper confetti from the button */
   function showerBlessingsFromButton(btn, taps) {
-    const rect = btn.getBoundingClientRect();
-    const origin = {
-      x: (rect.left + rect.width / 2) / Math.max(window.innerWidth, 1),
-      y: (rect.top + rect.height / 2) / Math.max(window.innerHeight, 1),
-    };
     const particleCount = Math.min(50 + taps * 14, 130);
-
-    if (typeof confetti === "function") {
-      confetti({
-        particleCount,
-        spread: 80,
-        startVelocity: 52,
-        gravity: 0.85,
-        ticks: 240,
-        decay: 0.9,
-        origin,
-        colors: BLESS_COLORS,
-        disableForReducedMotion: true,
-      });
-      // Second wave — fuller popper (wedding-style richness)
-      setTimeout(() => {
-        confetti({
-          particleCount: Math.floor(particleCount * 0.5),
-          spread: 100,
-          startVelocity: 36,
-          gravity: 0.95,
-          ticks: 200,
-          origin,
-          colors: BLESS_COLORS,
-          disableForReducedMotion: true,
-        });
-      }, 100);
-    } else {
-      // Fallback if CDN blocked
-      burstPetals(particleCount, {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-      });
-    }
+    partyPopperFrom(btn, particleCount);
   }
 
   if (blessBtn) {
@@ -569,77 +619,56 @@
   });
 
   /* —— Actions —— */
-  const shareBtn = document.getElementById("share-btn");
   const calendarBtn = document.getElementById("calendar-btn");
 
-  function shareText() {
-    const url = window.location.href.split("#")[0];
+  function isAppleTouch() {
+    const ua = navigator.userAgent || "";
     return (
-      "You’re invited to celebrate Nissita Mangam’s first birthday!\n" +
-      "Saturday, 29th August · 10:30 AM onwards\n" +
-      "Cherukuri Convention, NH216A, Bommuru\n" +
-      "Lunch follows.\n\n" +
-      "Open invitation: " +
-      url
+      /iPhone|iPad|iPod/i.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
     );
   }
 
-  function updateShareLink() {
-    const text = encodeURIComponent(shareText());
-    shareBtn.href = "https://wa.me/?text=" + text;
+  function openAppleCalendar() {
+    // iOS Safari reliably opens a hosted .ics in Calendar (data: URLs often fail)
+    const icsUrl = new URL(
+      "nissita-first-birthday.ics",
+      window.location.href
+    ).href;
+    window.location.assign(icsUrl);
   }
-  updateShareLink();
 
-  shareBtn.addEventListener("click", async (e) => {
-    updateShareLink();
-    if (navigator.share) {
+  function openGoogleCalendar() {
+    const text = encodeURIComponent("Nissita Mangam — First Birthday");
+    const details = encodeURIComponent(
+      "Lunch follows. You're invited to celebrate!\n" +
+        window.location.href.split("#")[0]
+    );
+    const loc = encodeURIComponent("Cherukuri Convention, NH216A, Bommuru, Rajahmundry");
+    const dates = "20260829T050000Z/20260829T080000Z";
+    const gcal =
+      "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+      "&text=" +
+      text +
+      "&dates=" +
+      dates +
+      "&details=" +
+      details +
+      "&location=" +
+      loc;
+    window.open(gcal, "_blank", "noopener,noreferrer");
+  }
+
+  if (calendarBtn) {
+    calendarBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      try {
-        await navigator.share({
-          title: "Nissita Mangam — First Birthday",
-          text: shareText(),
-          url: window.location.href.split("#")[0],
-        });
-      } catch (_) {
-        window.open(shareBtn.href, "_blank", "noopener");
+      if (isAppleTouch()) {
+        openAppleCalendar();
+      } else {
+        openGoogleCalendar();
       }
-    }
-  });
-
-  function buildIcs() {
-    // 29 Aug 2026 10:30 IST (UTC+5:30) → 05:00 UTC
-    const uid = "nissita-first-birthday@" + location.hostname;
-    const ics = [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//Mangam Family//Nissita First Birthday//EN",
-      "CALSCALE:GREGORIAN",
-      "METHOD:PUBLISH",
-      "BEGIN:VEVENT",
-      "UID:" + uid,
-      "DTSTAMP:20260822T000000Z",
-      "DTSTART:20260829T050000Z",
-      "DTEND:20260829T080000Z",
-      "SUMMARY:Nissita Mangam — First Birthday",
-      "DESCRIPTION:Lunch follows. You are invited to celebrate!",
-      "LOCATION:Cherukuri Convention\\, NH216A\\, Bommuru",
-      "END:VEVENT",
-      "END:VCALENDAR",
-    ].join("\r\n");
-    return ics;
+    });
   }
-
-  calendarBtn.addEventListener("click", () => {
-    const blob = new Blob([buildIcs()], { type: "text/calendar;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "nissita-first-birthday.ics";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  });
 
   /* —— Countdown to 29 Aug 2026, 10:30 AM IST —— */
   const EVENT_IST_MS = Date.parse("2026-08-29T10:30:00+05:30");
@@ -648,7 +677,8 @@
   const cdHours = document.getElementById("cd-hours");
   const cdMins = document.getElementById("cd-mins");
   const cdSecs = document.getElementById("cd-secs");
-  const cdLabel = cdRoot ? cdRoot.querySelector(".countdown-label") : null;
+  const cdLive = cdRoot ? cdRoot.querySelector(".countdown-live") : null;
+  const cdGrid = cdRoot ? cdRoot.querySelector(".countdown-grid") : null;
 
   function pad2(n) {
     return String(Math.max(0, n)).padStart(2, "0");
@@ -658,11 +688,8 @@
     if (!cdDays || !cdHours || !cdMins || !cdSecs) return;
     const diff = EVENT_IST_MS - Date.now();
     if (diff <= 0) {
-      cdDays.textContent = "00";
-      cdHours.textContent = "00";
-      cdMins.textContent = "00";
-      cdSecs.textContent = "00";
-      if (cdLabel) cdLabel.textContent = "The celebration has begun";
+      if (cdGrid) cdGrid.hidden = true;
+      if (cdLive) cdLive.hidden = false;
       if (cdRoot) cdRoot.classList.add("is-live");
       return;
     }

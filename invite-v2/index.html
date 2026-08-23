@@ -8,12 +8,20 @@
       name="description"
       content="You’re invited to celebrate Nissita Mangam’s first birthday — Saturday, 29th August, 10:30 AM at Cherukuri Convention."
     />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://MangamManoj.github.io/nissi-birthday-invite/" />
     <meta property="og:title" content="Nissita Mangam — First Birthday" />
     <meta
       property="og:description"
-      content="Saturday, 29th August · 10:30 AM · Cherukuri Convention, Bommuru"
+      content="Saturday, 29th August · 10:30 AM · Cherukuri Convention, Bommuru, Rajahmundry"
     />
-    <meta property="og:image" content="assets/baby.jpg" />
+    <meta
+      property="og:image"
+      content="https://MangamManoj.github.io/nissi-birthday-invite/assets/baby.jpg"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <title>Nissita Mangam — First Birthday (v2)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,39 +34,70 @@
   <body class="is-sealed">
     <canvas id="petals" aria-hidden="true"></canvas>
 
-    <div id="seal-gate" class="seal-gate" role="dialog" aria-modal="true" aria-label="Open invitation">
-      <div class="seal-peek" aria-hidden="true">
-        <video
-          class="peek-video"
-          src="assets/baby.mp4"
-          poster="assets/baby.jpg"
-          muted
-          loop
-          playsinline
-          webkit-playsinline
-          preload="metadata"
-        ></video>
-      </div>
+    <div class="seal-backdrop" id="seal-backdrop" aria-hidden="true">
+      <img
+        class="peek-image"
+        src="assets/baby.jpg"
+        alt=""
+        decoding="async"
+      />
+    </div>
 
+    <div id="seal-gate" class="seal-gate" role="dialog" aria-modal="true" aria-label="Tap to open">
       <div class="envelope">
+        <svg class="landing-balloons left" viewBox="0 0 120 200" aria-hidden="true">
+          <line x1="40" y1="70" x2="52" y2="198" stroke="#d4a017" stroke-width="1.2" />
+          <line x1="74" y1="58" x2="58" y2="198" stroke="#d4a017" stroke-width="1.2" />
+          <ellipse cx="40" cy="42" rx="22" ry="28" fill="#ff9eb5" />
+          <ellipse cx="40" cy="26" rx="7" ry="5" fill="#ffd0db" opacity="0.7" />
+          <path d="M40 72 l-4 8 h8 z" fill="#e85a7a" />
+          <ellipse cx="74" cy="34" rx="20" ry="26" fill="#ffe08a" />
+          <ellipse cx="74" cy="20" rx="6" ry="4.5" fill="#fff3c4" opacity="0.7" />
+          <path d="M74 62 l-4 8 h8 z" fill="#e8b923" />
+        </svg>
+        <svg class="landing-balloons right" viewBox="0 0 120 200" aria-hidden="true">
+          <line x1="80" y1="70" x2="68" y2="198" stroke="#d4a017" stroke-width="1.2" />
+          <line x1="46" y1="58" x2="62" y2="198" stroke="#d4a017" stroke-width="1.2" />
+          <ellipse cx="80" cy="42" rx="22" ry="28" fill="#ffb07a" />
+          <ellipse cx="80" cy="26" rx="7" ry="5" fill="#ffd4b8" opacity="0.7" />
+          <path d="M80 72 l-4 8 h8 z" fill="#e89050" />
+          <ellipse cx="46" cy="34" rx="20" ry="26" fill="#f2b8c1" />
+          <ellipse cx="46" cy="20" rx="6" ry="4.5" fill="#ffe0e8" opacity="0.7" />
+          <path d="M46 62 l-4 8 h8 z" fill="#e85a7a" />
+        </svg>
         <div class="envelope-inner">
-          <p class="seal-eyebrow">With love</p>
+          <p class="seal-eyebrow">Our Loving Invitation</p>
           <p class="seal-names">
-            <span class="cap">N</span>issita <span class="cap">M</span>angam
+            <span class="cap">N</span>issita <span class="cap">M</span>angam’s
           </p>
-          <p class="seal-sub">turns ONE</p>
+          <p class="seal-event">1st Birthday</p>
+          <div class="seal-rule" aria-hidden="true"></div>
 
-          <button type="button" id="open-invite" class="seal-btn" aria-label="Open invitation">
-            <span class="seal-ring" aria-hidden="true"></span>
-            <span class="seal-wax" aria-hidden="true">✦</span>
-            <span class="seal-btn-text">Open invitation</span>
+          <button type="button" id="open-invite" class="seal-btn" aria-label="Tap to open">
+            <span class="seal-wax" aria-hidden="true">
+              <svg class="mail-icon" viewBox="0 0 24 24" width="28" height="28">
+                <rect
+                  x="3"
+                  y="5.5"
+                  width="18"
+                  height="13"
+                  rx="2"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                />
+                <path
+                  d="M4 7.5l8 6 8-6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <span class="seal-btn-text">Tap to open</span>
           </button>
-        </div>
-        <div class="envelope-corners" aria-hidden="true">
-          <span class="ec tl"></span>
-          <span class="ec tr"></span>
-          <span class="ec bl"></span>
-          <span class="ec br"></span>
         </div>
       </div>
     </div>
@@ -93,7 +132,7 @@
       <header class="hero">
         <p class="verse">
           “I praise you, for I am fearfully and wonderfully made.”
-          <span class="verse-ref">Psalm 139:14</span>
+          <span class="verse-ref">— Psalms 139:14</span>
         </p>
 
         <div class="hero-photo">
@@ -110,25 +149,55 @@
             aria-label="Nissita Mangam"
           ></video>
           <div class="hero-band">
-            <p class="invite-line">Come celebrate our little blessing</p>
             <h1 class="name"><span class="cap">N</span>issita <span class="cap">M</span>angam</h1>
-            <p class="turns-one">turns ONE</p>
+            <p class="turns-one">
+              turns <span class="age-num">ONE</span><span class="turns-in"> in</span>
+              <span class="countdown countdown-hero" id="countdown" aria-label="Countdown to the celebration">
+                <span class="countdown-grid">
+                  <span class="countdown-cell">
+                    <span class="countdown-num" id="cd-days">00</span><span class="countdown-unit">d</span>
+                  </span>
+                  <span class="countdown-sep" aria-hidden="true">:</span>
+                  <span class="countdown-cell">
+                    <span class="countdown-num" id="cd-hours">00</span><span class="countdown-unit">h</span>
+                  </span>
+                  <span class="countdown-sep" aria-hidden="true">:</span>
+                  <span class="countdown-cell">
+                    <span class="countdown-num" id="cd-mins">00</span><span class="countdown-unit">m</span>
+                  </span>
+                  <span class="countdown-sep" aria-hidden="true">:</span>
+                  <span class="countdown-cell">
+                    <span class="countdown-num" id="cd-secs">00</span><span class="countdown-unit">s</span>
+                  </span>
+                </span>
+                <span class="countdown-live" hidden>It’s celebration time</span>
+              </span>
+            </p>
           </div>
         </div>
       </header>
 
+      <section class="intro" aria-label="Celebration">
+        <p class="invite-line">Come celebrate our little blessing...</p>
+      </section>
+
       <section class="details">
-        <p class="detail-date">Saturday, 29th August</p>
-        <p class="detail-time">10:30 AM onwards</p>
+        <p class="detail-date">Saturday, 29<span class="ord">th</span> August</p>
+        <p class="detail-time"><span class="time-strong">10:30 AM</span> onwards</p>
         <p class="detail-lunch">Lunch follows</p>
         <p class="detail-venue">Cherukuri Convention</p>
-        <p class="detail-address">NH216A, Bommuru</p>
+        <p class="detail-address">NH216A, Bommuru, Rajahmundry</p>
+      </section>
+
+      <nav class="actions" aria-label="Invitation actions">
         <a
-          class="maps-cta"
+          class="icon-btn"
           id="maps-btn"
-          href="https://www.google.com/maps/search/?api=1&query=Cherukuri+Convention+NH216A+Bommuru"
+          href="https://www.google.com/maps/search/?api=1&query=Cherukuri+Convention+NH216A+Bommuru+Rajahmundry"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Open in Google Maps"
+          title="Google Maps"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
@@ -148,42 +217,28 @@
               stroke-width="1.6"
             />
           </svg>
-          Open in Google Maps
         </a>
-
-        <div class="countdown" id="countdown" aria-label="Countdown to the celebration">
-          <p class="countdown-label">Begins in</p>
-          <div class="countdown-grid">
-            <div class="countdown-cell">
-              <span class="countdown-num" id="cd-days">00</span>
-              <span class="countdown-unit">d</span>
-            </div>
-            <span class="countdown-sep" aria-hidden="true">:</span>
-            <div class="countdown-cell">
-              <span class="countdown-num" id="cd-hours">00</span>
-              <span class="countdown-unit">h</span>
-            </div>
-            <span class="countdown-sep" aria-hidden="true">:</span>
-            <div class="countdown-cell">
-              <span class="countdown-num" id="cd-mins">00</span>
-              <span class="countdown-unit">m</span>
-            </div>
-            <span class="countdown-sep" aria-hidden="true">:</span>
-            <div class="countdown-cell">
-              <span class="countdown-num" id="cd-secs">00</span>
-              <span class="countdown-unit">s</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <nav class="actions" aria-label="Invitation actions">
+        <button
+          type="button"
+          id="bless-btn"
+          class="icon-btn bless-heart"
+          aria-label="Shower your blessings"
+          title="Shower your blessings"
+        >
+          <span class="bless-heart-glow" aria-hidden="true"></span>
+          <svg class="bless-heart-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 21s-6.2-4.35-9.2-8.1C1.1 10.9 1 8.2 2.6 6.4 4.1 4.7 6.7 4.6 8.4 6.1L12 9.4l3.6-3.3c1.7-1.5 4.3-1.4 5.8.3 1.6 1.8 1.5 4.5-.2 6.5C18.2 16.65 12 21 12 21z"
+            />
+          </svg>
+          <span class="bless-badge" id="bless-total" aria-live="polite">0</span>
+        </button>
         <button
           type="button"
           class="icon-btn"
           id="calendar-btn"
           aria-label="Add to calendar"
-          title="Calendar"
+          title="Add to calendar"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <rect
@@ -205,29 +260,8 @@
             />
           </svg>
         </button>
-        <a
-          class="icon-btn"
-          id="share-btn"
-          href="#"
-          aria-label="Share on WhatsApp"
-          title="WhatsApp"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill="currentColor"
-              d="M12.04 2C6.58 2 2.15 6.4 2.15 11.84c0 1.98.58 3.82 1.58 5.38L2 22l4.94-1.63a9.9 9.9 0 0 0 5.1 1.4h.01c5.46 0 9.89-4.4 9.89-9.84C21.94 6.4 17.5 2 12.04 2zm5.76 13.99c-.24.68-1.4 1.24-1.94 1.32-.5.07-1.14.1-1.84-.12-.42-.13-.97-.28-1.67-.55-2.94-1.27-4.86-4.23-5.01-4.43-.15-.2-1.24-1.65-1.24-3.15s.78-2.23 1.06-2.54c.27-.3.6-.38.8-.38h.58c.18 0 .43-.07.67.51.24.6.82 2.07.89 2.22.07.15.12.33.02.53-.1.2-.15.33-.3.5-.15.18-.31.39-.44.53-.15.15-.3.31-.13.6.17.3.76 1.25 1.63 2.03 1.12 1 2.07 1.31 2.36 1.46.3.15.47.12.64-.07.18-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.72.81 2.01.96.3.15.5.22.57.35.08.12.08.7-.16 1.38z"
-            />
-          </svg>
-        </a>
       </nav>
-
-      <button type="button" id="bless-btn" class="bless-btn">
-        <span class="bless-btn-glow" aria-hidden="true"></span>
-        <span class="bless-btn-label">Shower Blessings</span>
-      </button>
-      <p class="bless-count" aria-live="polite">
-        <span id="bless-total">0</span> blessings showered with love
-      </p>
+      <p class="bless-hint">shower your blessings</p>
       <p id="bless-note" class="bless-note" hidden>Amen — petals of blessing for Nissita</p>
 
       <p class="host">With love, The Mangam Family</p>
