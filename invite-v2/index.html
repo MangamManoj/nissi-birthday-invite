@@ -36,8 +36,25 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="preload" href="assets/bgm.m4a" as="audio" type="audio/mp4" />
+    <script>
+      // Direct invite (no landing): ?open=1 or open.html
+      (function () {
+        var q = location.search;
+        var direct =
+          /(?:\?|&)open(?:=1|=true)?(?:&|$)/i.test(q) ||
+          /\/open(?:\.html)?\/?$/i.test(location.pathname);
+        if (direct) document.documentElement.classList.add("direct-open");
+      })();
+    </script>
   </head>
   <body class="is-sealed">
+    <script>
+      if (document.documentElement.classList.contains("direct-open")) {
+        document.body.classList.remove("is-sealed");
+        document.body.classList.add("is-open");
+      }
+    </script>
     <canvas id="petals" aria-hidden="true"></canvas>
 
     <div class="seal-backdrop" id="seal-backdrop" aria-hidden="true">

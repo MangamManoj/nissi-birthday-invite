@@ -34,6 +34,11 @@ body.is-sealed {
   height: 100dvh;
 }
 
+html.direct-open .seal-gate,
+html.direct-open .seal-backdrop {
+  display: none !important;
+}
+
 /* —— Open seal gate (matches invite page blush–gold theme) —— */
 .seal-backdrop {
   position: fixed;

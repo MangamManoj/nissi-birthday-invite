@@ -1,6 +1,6 @@
 /**
  * Nissita Mangam — first birthday web invite
- * Petal rain · ambient BGM · Maps / calendar / WhatsApp
+ * Petal rain · track BGM · Maps / calendar
  */
 
 (function () {
@@ -170,219 +170,32 @@
     resizeCanvas();
   });
 
-  /* —— Amazing Grace instrumental BGM (Safari / iOS–safe unlock) —— */
-  let audioCtx = null;
-  let masterGain = null;
+  /* —— Track BGM (assets/bgm.m4a; pre-trimmed: −2s start, −5s end) —— */
+  let bgmAudio = null;
   let bgmStarted = false;
-  let nextNoteTime = 0;
-  let schedulerTimer = null;
 
-  const G3 = 196.0;
-  const A3 = 220.0;
-  const C4 = 261.63;
-  const D4 = 293.66;
-  const E4 = 329.63;
-  const G4 = 392.0;
-  const A4 = 440.0;
-  const C3 = 130.81;
-  const F3 = 174.61;
-  const REST = 0;
-
-  // Public-domain hymn — Amazing Grace (New Britain) in C
-  // [freq, beats, bassRoot]
-  const melody = [
-    // Amazing grace, how sweet the sound
-    [G3, 1, C3],
-    [C4, 1.5, C3], [E4, 0.5, C3], [C4, 1, C3],
-    [E4, 1, C3], [D4, 2, G3],
-    [C4, 1.5, C3], [A3, 0.5, F3], [G3, 3, C3],
-    // That saved a wretch like me
-    [G3, 1, C3],
-    [C4, 1.5, C3], [E4, 0.5, C3], [C4, 1, C3],
-    [E4, 1, C3], [G4, 2, C3],
-    [G4, 1.5, C3], [E4, 0.5, C3], [C4, 3, C3],
-    // I once was lost, but now am found
-    [C4, 1, C3],
-    [E4, 1.5, C3], [G4, 0.5, C3], [E4, 1, C3],
-    [G4, 1, C3], [A4, 2, F3],
-    [G4, 1.5, C3], [E4, 0.5, C3], [D4, 3, G3],
-    // Was blind, but now I see
-    [D4, 1, G3],
-    [C4, 1.5, C3], [E4, 0.5, C3], [C4, 1, C3],
-    [E4, 1, C3], [D4, 2, G3],
-    [C4, 1.5, C3], [A3, 0.5, F3], [G3, 2, C3], [C4, 2, C3],
-    [REST, 2, 0],
-  ];
-  let noteIndex = 0;
-  const beat = 0.3; // bright yet grateful
-
-
-  function ensureAudio() {
-    if (audioCtx) return audioCtx;
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return null;
-    audioCtx = new AC();
-    masterGain = audioCtx.createGain();
-    masterGain.gain.value = BGM_VOLUME;
-    masterGain.connect(audioCtx.destination);
-    return audioCtx;
+  function ensureBgmAudio() {
+    if (bgmAudio) return bgmAudio;
+    bgmAudio = new Audio("assets/bgm.m4a");
+    bgmAudio.preload = "auto";
+    bgmAudio.playsInline = true;
+    bgmAudio.setAttribute("playsinline", "");
+    bgmAudio.loop = true;
+    bgmAudio.volume = BGM_VOLUME;
+    return bgmAudio;
   }
 
   /** Must run inside a user-gesture call stack on Safari/iOS */
-  function unlockAudioSync() {
-    const ctx = ensureAudio();
-    if (!ctx) return false;
-
-    // Silent buffer unlock (iOS Safari)
-    try {
-      const buffer = ctx.createBuffer(1, 1, 22050);
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(ctx.destination);
-      source.start(0);
-    } catch (_) {
-      /* ignore */
-    }
-
-    // Tiny click also helps some WebKit builds
-    try {
-      const osc = ctx.createOscillator();
-      const g = ctx.createGain();
-      g.gain.value = 0.0001;
-      osc.connect(g);
-      g.connect(ctx.destination);
-      osc.start(0);
-      osc.stop(ctx.currentTime + 0.01);
-    } catch (_) {
-      /* ignore */
-    }
-
-    if (ctx.state === "suspended") {
-      ctx.resume();
-    }
-    return true;
-  }
-
-  function rampGain(gainParam, peak, time, attack, dur) {
-    // linear ramps only — Safari dislikes exponential from 0
-    gainParam.setValueAtTime(0.0001, time);
-    gainParam.linearRampToValueAtTime(peak, time + attack);
-    gainParam.linearRampToValueAtTime(0.0001, time + Math.max(attack + 0.02, dur));
-  }
-
-  function playTone(freq, time, dur, peak) {
-    if (!audioCtx || !masterGain || !freq) return;
-    const attack = Math.min(0.035, dur * 0.15);
-    const amp = peak == null ? 0.7 : peak;
-
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = "triangle";
-    osc.frequency.setValueAtTime(freq, time);
-    rampGain(gain.gain, amp, time, attack, dur);
-    osc.connect(gain);
-    gain.connect(masterGain);
-    osc.start(time);
-    osc.stop(time + dur + 0.06);
-
-    // Bright sparkle
-    const osc2 = audioCtx.createOscillator();
-    const gain2 = audioCtx.createGain();
-    osc2.type = "sine";
-    osc2.frequency.setValueAtTime(freq * 2, time);
-    rampGain(gain2.gain, amp * 0.32, time, attack, dur);
-    osc2.connect(gain2);
-    gain2.connect(masterGain);
-    osc2.start(time);
-    osc2.stop(time + dur + 0.06);
-
-    const osc3 = audioCtx.createOscillator();
-    const gain3 = audioCtx.createGain();
-    osc3.type = "sine";
-    osc3.frequency.setValueAtTime(freq * 3, time);
-    rampGain(gain3.gain, amp * 0.1, time, attack, dur * 0.8);
-    osc3.connect(gain3);
-    gain3.connect(masterGain);
-    osc3.start(time);
-    osc3.stop(time + dur + 0.06);
-  }
-
-  function playChord(root, time, dur) {
-    if (!root) return;
-    // Light grateful pad — higher voicing for brightness
-    playTone(root * 2, time, dur, 0.1);
-    playTone(root * 2.5, time, dur, 0.08);
-    playTone(root * 3, time, dur, 0.06);
-  }
-
-  function scheduleNotes() {
-    if (!audioCtx || audioCtx.state !== "running") return;
-    const now = audioCtx.currentTime;
-    if (nextNoteTime < now) nextNoteTime = now + 0.02;
-    const horizon = now + 0.25;
-    while (nextNoteTime < horizon + 1.5) {
-      const [freq, beats, bass] = melody[noteIndex % melody.length];
-      const dur = beats * beat;
-      if (freq) {
-        playTone(freq, nextNoteTime, dur * 0.92, 0.78);
-        if (bass) {
-          playChord(bass, nextNoteTime, dur * 0.95);
-          playTone(bass, nextNoteTime, dur * 0.98, 0.2);
-        }
-      }
-      nextNoteTime += dur;
-      noteIndex++;
-    }
-  }
-
-  function startScheduler() {
-    if (!audioCtx) return;
-    if (schedulerTimer) return;
-    nextNoteTime = audioCtx.currentTime + 0.05;
-    noteIndex = noteIndex % melody.length;
-    scheduleNotes();
-    schedulerTimer = setInterval(scheduleNotes, 180);
-  }
-
-  function stopScheduler() {
-    if (schedulerTimer) {
-      clearInterval(schedulerTimer);
-      schedulerTimer = null;
-    }
-  }
-
   function startBgmFromGesture() {
-    unlockAudioSync();
-    if (!audioCtx) return;
-
-    const finish = () => {
-      if (audioCtx.state === "running" && !bgmStarted) {
-        bgmStarted = true;
-        startScheduler();
-      } else if (audioCtx.state === "running" && !schedulerTimer) {
-        startScheduler();
-      }
-    };
-
-    if (audioCtx.state === "running") {
-      finish();
-      return;
-    }
-
-    const p = audioCtx.resume();
+    const audio = ensureBgmAudio();
+    const p = audio.play();
     if (p && typeof p.then === "function") {
-      p.then(finish).catch(() => {});
+      p.then(() => {
+        bgmStarted = true;
+      }).catch(() => {});
+    } else {
+      bgmStarted = true;
     }
-    let tries = 0;
-    const poll = setInterval(() => {
-      tries++;
-      if (audioCtx.state === "running") {
-        clearInterval(poll);
-        finish();
-      } else if (tries > 20) {
-        clearInterval(poll);
-      }
-    }, 50);
   }
 
   /* —— Party popper (shared by open + Shower Blessings) —— */
@@ -452,6 +265,30 @@
   const sealBackdrop = document.getElementById("seal-backdrop");
   const openBtn = document.getElementById("open-invite");
   let inviteOpening = false;
+  const directOpen =
+    document.documentElement.classList.contains("direct-open") ||
+    new URLSearchParams(location.search).has("open");
+
+  function revealInviteContent() {
+    document.body.classList.remove("is-sealed");
+    document.body.classList.add("is-open");
+    if (sealGate) {
+      sealGate.classList.add("is-open");
+      sealGate.setAttribute("hidden", "");
+    }
+    if (sealBackdrop) {
+      sealBackdrop.classList.add("is-open");
+      sealBackdrop.setAttribute("hidden", "");
+    }
+    setPetalMode("ambient");
+
+    const heroVideo = document.querySelector(".hero-video");
+    if (heroVideo) {
+      heroVideo.muted = true;
+      heroVideo.playsInline = true;
+      heroVideo.play().catch(() => {});
+    }
+  }
 
   function openInvitation(e) {
     if (e) {
@@ -463,21 +300,10 @@
 
     startBgmFromGesture(); // must stay in gesture stack (Safari)
 
-    const heroVideo = document.querySelector(".hero-video");
-    if (heroVideo) {
-      heroVideo.muted = true;
-      heroVideo.playsInline = true;
-      heroVideo.play().catch(() => {});
-    }
-
     if (sealGate) sealGate.classList.add("is-opening");
 
-    document.body.classList.remove("is-sealed");
-    document.body.classList.add("is-open");
-    if (sealGate) sealGate.classList.add("is-open");
-    if (sealBackdrop) sealBackdrop.classList.add("is-open");
+    revealInviteContent();
 
-    setPetalMode("ambient");
     // Same party-popper style & size as Shower Blessings
     partyPopperFrom(openBtn || { x: 0.5, y: 0.55 }, 110);
 
@@ -489,22 +315,45 @@
     }, 650);
   }
 
+  function openInvitationDirect() {
+    if (inviteOpening) return;
+    inviteOpening = true;
+    revealInviteContent();
+    recordUniqueOpen();
+    // Autoplay music is blocked on many phones — unlock on first tap
+    startBgmFromGesture();
+    const unlockOnce = () => {
+      startBgmFromGesture();
+      document.removeEventListener("pointerdown", unlockOnce);
+      document.removeEventListener("touchstart", unlockOnce);
+    };
+    document.addEventListener("pointerdown", unlockOnce, { passive: true });
+    document.addEventListener("touchstart", unlockOnce, { passive: true });
+  }
+
   // Landing uses a still photo backdrop (no peek video)
   // Hero video still starts on open below.
 
-  if (openBtn) {
-    openBtn.addEventListener("click", openInvitation);
-    openBtn.addEventListener("touchend", openInvitation, { passive: false });
-  }
-  if (sealGate) {
-    // Whole landing surface opens the invite
-    sealGate.addEventListener("click", openInvitation);
-    sealGate.addEventListener("touchend", openInvitation, { passive: false });
-  }
-  if (sealBackdrop) {
-    sealBackdrop.style.pointerEvents = "auto";
-    sealBackdrop.addEventListener("click", openInvitation);
-    sealBackdrop.addEventListener("touchend", openInvitation, { passive: false });
+  // Warm BGM cache on landing so open feels instant
+  ensureBgmAudio();
+
+  if (directOpen) {
+    openInvitationDirect();
+  } else {
+    if (openBtn) {
+      openBtn.addEventListener("click", openInvitation);
+      openBtn.addEventListener("touchend", openInvitation, { passive: false });
+    }
+    if (sealGate) {
+      // Whole landing surface opens the invite
+      sealGate.addEventListener("click", openInvitation);
+      sealGate.addEventListener("touchend", openInvitation, { passive: false });
+    }
+    if (sealBackdrop) {
+      sealBackdrop.style.pointerEvents = "auto";
+      sealBackdrop.addEventListener("click", openInvitation);
+      sealBackdrop.addEventListener("touchend", openInvitation, { passive: false });
+    }
   }
 
   const blessBtn = document.getElementById("bless-btn");
@@ -681,13 +530,9 @@
   document.addEventListener("visibilitychange", () => {
     petalsPaused = document.hidden;
     if (document.hidden) {
-      stopScheduler();
-      if (audioCtx && audioCtx.state === "running") audioCtx.suspend();
-    } else if (audioCtx && bgmStarted) {
-      unlockAudioSync();
-      audioCtx.resume().then(() => {
-        if (audioCtx.state === "running") startScheduler();
-      });
+      if (bgmAudio && !bgmAudio.paused) bgmAudio.pause();
+    } else if (bgmStarted && bgmAudio) {
+      bgmAudio.play().catch(() => {});
     }
   });
 
